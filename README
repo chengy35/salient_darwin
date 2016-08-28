@@ -1,0 +1,71 @@
+环境依赖：
+opencv2.9.9
+home/lib/vlfeat(需要make，之后把libvl.so　软链接，之后刷新环境变量)
+home/lib/liblinear
+home/lib/libsvm
+
+文件设置 :
+~/remote/Hollywood2　存原始视频文件
+　　　　　　　　/Data
+　　　　　　　　　　　　　/descriptor 存密集轨迹
+             /Vocab　存放的是采样的1000000个特征，还保存了降维后的数据，以及PCA特征值和特征向量,还保存了对每个特征的gmm的三个特征，即 means, covvariances,和priors.
+             /feats 采样得到的特征编码
+　　　　　　　　　　　　　　　　　　　hof/hog/mbh/trj/w 其中w存放的是liblinear系数，利用w的系数来进行训练和测试.
+参数设置：
+提取密集轨迹，设置一样
+采样1000000个轨迹.
+PCA降维，把维度降低到一半
+fisherVector得到的特征编码维度为2D*K，D是PCA降维后的维度
+把每个视频的密集轨迹按照帧来分类，然后读取PCA参数设置
+
+程序思路：
+运行的顺序如下：
+improved_trajectory得到密集轨迹
+
+运行方法：bash run.sh
+
+GMM 首先降维得到高斯混合模型
+
+运行方法：bash run.sh
+
+FV 对每个视频通过每一帧进行视频表示
+
+运行方法：bash run.sh
+
+Darwin　利用liblinear得到每个视频的w参数，也就是说，把每个视频当做liblinear的参数进行训练，保存结果在
+
+运行方法：bash run.sh
+
+Process 根据上述的ｗ参数，得到A*A'的ｗ文件，共1707个文件，分别用来做train和test(已经分好谁做train/test)
+
+trainAndTest　读取每个视频的w表示，进行分类，并且统计结果，保存在当前目录下面的accuracyFile中
+
+运行方法：bash run.sh
+
+
+test是测试程序，没什么用...
+
+
+
+Hollywood2 dataset [14] This dataset has been collected from 69 different Hollywood movies that include 12 action classes. It contains 1,707 videos in total where 823 videos are used for training and 884 are used for testing. Training and test videos are selected from different movies. The performance is measured by mean average precision (mAP) over all classes, as in [14].
+
+I. Laptev, M. Marszalek, C. Schmid, and B. Rozenfeld.Learning realistic human actions from movies. In CVPR,2008. 1, 2, 5
+
+HMDB51 dataset [12]. This is a generic action classification dataset composed of roughly 7,000 clips divided into 51 action classes. Videos and actions of this dataset are subject to different camera motions, viewpoints, video quality and occlusions. As done in the literature we use a one-vs- all classification strategy and report the mean classification accuracy over three standard splits provided by the authors in [12].
+
+H. Kuehne, H. Jhuang, E. Garrote, T. Poggio, and T. Serre. Hmdb: a large video database for human motion recognition. In ICCV, 2011. 5, 7
+
+
+
+Linux 用find命令查找文件大小为XX的文件的办法
+
+例如：一个文件5556字节，可以这样写
+
+find /root -size -5557c -size +5555c -exec ls -ld {} \;
+
+即查找大于5555字节小于5557字节的文件，以上查找的是/root 目录
+
+find /root -size -500K -size +50K -exec ls -ld {} \;
+
+查找 小于500K，大于50K的文件
+
