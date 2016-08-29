@@ -12,7 +12,6 @@ BINDIR := $(BUILD)
 # libraries
 LDLIBS = $(addprefix -l, $(LIBS) $(LIBS_$(notdir $*)))
 LIBS := \
-	boost_program_options boost_regex boost_system boost_filesystem \
 	opencv_core opencv_imgproc opencv_video opencv_nonfree opencv_features2d opencv_flann opencv_calib3d opencv_objdetect opencv_legacy opencv_highgui \
 	avformat avutil avcodec swscale z
 #LIBS_hog2D := boost_python-mt

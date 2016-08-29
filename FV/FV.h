@@ -13,24 +13,7 @@ void getFV(char * featDir)
 {
 	char *fvFilePath = new char[filePathSize];
 	char *command = new char[filePathSize];
-	// strcpy(command,"mkdir ");
-	// strcpy(fvFilePath,featDir);
-	// strcat(fvFilePath,"trj");
-	// strcat(command,fvFilePath);
-	// //cout<<command<<endl;
-	// system(command);
-	// strcpy(command,"mkdir ");
-	// strcpy(fvFilePath,featDir);
-	// strcat(fvFilePath,"hog");
-	// strcat(command,fvFilePath);
-	// //cout<<command<<endl;
-	// system(command);
-	// strcpy(command,"mkdir ");
-	// strcpy(fvFilePath,featDir);
-	// strcat(fvFilePath,"hof");
-	// strcat(command,fvFilePath);
-	// //cout<<command<<endl;
-	//system(command);
+	
 	strcpy(command,"mkdir ");
 	strcpy(fvFilePath,featDir);
 	strcat(fvFilePath,"mbh");
