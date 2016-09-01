@@ -50,6 +50,7 @@ const float pcaFactor = 0.5f;
 static char *vocabDir = "../../../remote/Data/Vocab/";
 static char *featDir = "../../../remote/Data/feats/";
 static char *descriptor_path = "../../../remote/Data/descriptor/";
+static char *volume_descriptor_path = "../../../remote/Data/volume/";
 
 static char * pcaTrjInfo = "../../../remote/Data/Vocab/pcaTrjInfo.xml";
 static char * pcaHogInfo = "../../../remote/Data/Vocab/pcaHogInfo.xml";

@@ -24,7 +24,7 @@ improved_trajectory得到密集轨迹
 
 运行方法：bash run.sh
 
-从密集轨迹中得到discriminative subvolume中所有的密集轨迹，当做是更显著的轨迹...,然后才可以建立GMM模型.
+从密集轨迹中得到discriminative subvolume中所有的密集轨迹，当做是更显著的轨迹...
 
 GMM 首先降维得到高斯混合模型
 

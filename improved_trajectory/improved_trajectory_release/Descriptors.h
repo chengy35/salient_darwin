@@ -161,57 +161,6 @@ void MbhComp(const Mat& flow, float* descX, float* descY, DescInfo& descInfo, Cv
 	BuildDescMat(flowYdX, flowYdY, descY, descInfo,kernelMatrix);
 }
 
-// check whether a trajectory is valid or not
-bool IsValid(std::vector<Point2f>& track, float& mean_x, float& mean_y, float& var_x, float& var_y, float& length)
-{
-	int size = track.size();
-	float norm = 1./size;
-	for(int i = 0; i < size; i++) {
-		mean_x += track[i].x;
-		mean_y += track[i].y;
-	}
-	mean_x *= norm;
-	mean_y *= norm;
-
-	for(int i = 0; i < size; i++) {
-		float temp_x = track[i].x - mean_x;
-		float temp_y = track[i].y - mean_y;
-		var_x += temp_x*temp_x;
-		var_y += temp_y*temp_y;
-	}
-	var_x *= norm;
-	var_y *= norm;
-	var_x = sqrt(var_x);
-	var_y = sqrt(var_y);
-
-	// remove static trajectory
-	if(var_x < min_var && var_y < min_var)
-		return false;
-	// remove random trajectory
-	if( var_x > max_var || var_y > max_var )
-		return false;
-
-	float cur_max = 0;
-	for(int i = 0; i < size-1; i++) {
-		track[i] = track[i+1] - track[i];
-		float temp = sqrt(track[i].x*track[i].x + track[i].y*track[i].y);
-
-		length += temp;
-		if(temp > cur_max)
-			cur_max = temp;
-	}
-
-	if(cur_max > max_dis && cur_max > length*0.7)
-		return false;
-
-	track.pop_back();
-	norm = 1./length;
-	// normalize the trajectory
-	for(int i = 0; i < size-1; i++)
-		track[i] *= norm;
-
-	return true;
-}
 
 bool IsCameraMotion(std::vector<Point2f>& disp)
 {
@@ -640,59 +589,10 @@ float getSum(Mat mat_CV_8UC1 )
    return averageSaliency;
 }
 
-/* check whether a trajectory is salient or not */
-int isValid(std::vector<Point2f>& track, std::vector<float>& saliency, std::vector<float>& averageSaliency, float threshold)
+
+// check whether a trajectory is valid or not
+bool IsValid(std::vector<Point2f>& track, float& mean_x, float& mean_y, float& var_x, float& var_y, float& length,std::vector<float>& saliency, std::vector<float>& averageSaliency, float threshold)
 {
-	/*int size = track.size();
-	float mean_x(0), mean_y(0), var_x(0), var_y(0), length(0);
-	for(int i = 0; i < size; i++) {
-		mean_x += track[i].x;
-		mean_y += track[i].y;
-	}
-	mean_x /= size;
-	mean_y /= size;
-
-	for(int i = 0; i < size; i++) {
-		track[i].x -= mean_x;
-		var_x += track[i].x*track[i].x;
-		track[i].y -= mean_y;
-		var_y += track[i].y*track[i].y;
-	}
-	var_x /= size;
-	var_y /= size;
-	var_x = sqrt(var_x);
-	var_y = sqrt(var_y);
-	// remove static trajectory
-	if(var_x < min_var && var_y < min_var)
-		return 0;
-	// remove random trajectory
-	if( var_x > max_var || var_y > max_var )
-		return 0;
-
-	for(int i = 1; i < size; i++) {
-		float temp_x = track[i].x - track[i-1].x;
-		float temp_y = track[i].y - track[i-1].y;
-		length += sqrt(temp_x*temp_x+temp_y*temp_y);
-		track[i-1].x = temp_x;
-		track[i-1].y = temp_y;
-	}
-
-	float len_thre = length*0.7;
-	for( int i = 0; i < size-1; i++ ) {
-		float temp_x = track[i].x;
-		float temp_y = track[i].y;
-		float temp_dis = sqrt(temp_x*temp_x + temp_y*temp_y);
-		if( temp_dis > max_dis && temp_dis > len_thre )
-			return 0;
-	}
-
-	track.pop_back();
-	// normalize the trajectory
-	for(int i = 0; i < size-1; i++) {
-		track[i].x /= length;
-		track[i].y /= length;
-	}
-	return 1;*/
 	int size = track.size();
 	// keep salient trajectories
 	float averageSal = 0;
@@ -704,11 +604,57 @@ int isValid(std::vector<Point2f>& track, std::vector<float>& saliency, std::vect
 	}
 	averageSal /= (size - 1);
 	sal /= (size - 1);
-	if (sal >= averageSal * threshold)
+	if (sal < averageSal * threshold)
 	{
-		return 1;
+		return 0;	
 	}
-	return 0;
+
+	float norm = 1./size;
+	for(int i = 0; i < size; i++) {
+		mean_x += track[i].x;
+		mean_y += track[i].y;
+	}
+	mean_x *= norm;
+	mean_y *= norm;
+
+	for(int i = 0; i < size; i++) {
+		float temp_x = track[i].x - mean_x;
+		float temp_y = track[i].y - mean_y;
+		var_x += temp_x*temp_x;
+		var_y += temp_y*temp_y;
+	}
+	var_x *= norm;
+	var_y *= norm;
+	var_x = sqrt(var_x);
+	var_y = sqrt(var_y);
+
+	// remove static trajectory
+	if(var_x < min_var && var_y < min_var)
+		return false;
+	// remove random trajectory
+	if( var_x > max_var || var_y > max_var )
+		return false;
+
+	float cur_max = 0;
+	for(int i = 0; i < size-1; i++) {
+		track[i] = track[i+1] - track[i];
+		float temp = sqrt(track[i].x*track[i].x + track[i].y*track[i].y);
+
+		length += temp;
+		if(temp > cur_max)
+			cur_max = temp;
+	}
+
+	if(cur_max > max_dis && cur_max > length*0.7)
+		return false;
+
+	track.pop_back();
+	norm = 1./length;
+	// normalize the trajectory
+	for(int i = 0; i < size-1; i++)
+		track[i] *= norm;
+
+	return true;
 }
 //---------------------------------end---------------------------
 

@@ -337,7 +337,8 @@ int main(int argc, char** argv)
 						displacement[i] = iTrack->disp[i]*fscales[iScale];
 	
 					float mean_x(0), mean_y(0), var_x(0), var_y(0), length(0);
-					if(( isValid(trajectory, saliency, averageSaliency, threshold_s) == 1 ) && IsCameraMotion(displacement))
+
+					if(( IsValid(trajectory, mean_x, mean_y, var_x, var_y, length,saliency, averageSaliency, threshold_s) == 1 ) && IsCameraMotion(displacement))
 					{
 						//output the trajectory
 						printf("%d\t%f\t%f\t%f\t%f\t%f\t%f\t", frame_num, mean_x, mean_y, var_x, var_y, length, fscales[iScale]);
