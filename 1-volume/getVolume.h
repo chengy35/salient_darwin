@@ -152,7 +152,7 @@ void getVolume(char **fullvideoname, char * volume_descriptor_path)
 		VideoCapture capture;
 		char* video = new char[100];
 		strcpy(video,fullvideoname[w]);
-		strcat(video,".avi");
+		//strcat(video,".avi");
 		cout<<fullvideoname[w]<<endl;
 
 		char* subvolumeFilePath = new char[100];
